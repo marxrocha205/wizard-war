@@ -51,6 +51,10 @@ export class InputHandler {
         window.addEventListener('mouseup', (e) => {
             if (e.button === 0) this.isMouseDown = false;
         });
+        // Reset de segurança caso o Drag and Drop do HTML5 "roube" o clique
+        window.addEventListener('dragend', () => {
+            this.isMouseDown = false;
+        });
     }
 
     /**

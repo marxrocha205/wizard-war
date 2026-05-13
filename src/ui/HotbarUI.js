@@ -31,24 +31,31 @@ export class HotbarUI {
             // --- Eventos de Drag and Drop ---
             div.addEventListener('dragstart', (e) => {
                 this.draggedIndex = index;
-                this.isDraggingUI = true; // Iniciou o arrasto
+                this.isDraggingUI = true;
                 div.classList.add('dragging');
-                
-                // Evita que o clique se propague como um tiro
                 e.stopPropagation();
             });
 
+            // CORREÇÃO: O HTML5 exige o preventDefault no dragover para o drop funcionar!
+            div.addEventListener('dragover', (e) => {
+                e.preventDefault(); 
+            });
+            
             div.addEventListener('drop', (e) => {
                 e.preventDefault();
                 this.onSwap(this.draggedIndex, index);
                 this.draggedIndex = null;
-                this.isDraggingUI = false; // Finalizou
+                this.isDraggingUI = false;
                 this.render();
             });
 
             div.addEventListener('dragend', () => {
                 div.classList.remove('dragging');
-                this.isDraggingUI = false; // Reset de segurança
+                this.isDraggingUI = false;
+                
+                // CORREÇÃO: Força o navegador a disparar um "MouseUp" global 
+                // para desbugar o InputHandler que ficou preso atirando
+                window.dispatchEvent(new Event('mouseup')); 
             });
 
             this.container.appendChild(div);

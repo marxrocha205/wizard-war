@@ -55,16 +55,15 @@ export class Player {
      * @param {import('../core/InputHandler').InputHandler} input 
      * @param {import('../map/TileMap').TileMap} tileMap - Mapa para checagem de colisão
      */
-    update(deltaTime, input, tileMap, camera) { // <-- A correção está aqui
+    update(deltaTime, input, tileMap, camera) { 
         this._handleInput(deltaTime, input);
         this._applyPhysics(deltaTime, tileMap, input); 
-        this._handleSpellSwitch(input);
         this._handleAim(input, camera);
-        this._handleShooting(deltaTime, input);
-        // 1. Troca de slot pelos números 1 a 6
+        
+        // Troca de slot pelos números 1 a 6
         this._updateInventorySelection(input);
         
-        // 2. O inventário agora gerencia o uso (Atirar ou Usar Item)
+        // O inventário gerencia TUDO (Atirar ou Usar Poção)
         this.inventory.useActiveSlot(input, deltaTime);
     }
     _updateInventorySelection(input) {
@@ -214,42 +213,32 @@ export class Player {
         this.facingRight = dx >= 0;
     }
 
-   _handleSpellSwitch(input) {
-        if (input.isKeyPressed('Digit1'))  this.currentSpellIndex = 0 ; Logger.info(`1`);
-        if (input.isKeyPressed('Digit2')) this.currentSpellIndex = 1; Logger.info(`2`);
-        if (input.isKeyPressed('Digit3')) this.currentSpellIndex = 2; Logger.info(`3`);
-    }
-
+ 
     /**
      * Gerencia o disparo de magias baseado no cooldown e mana.
      */
-    _handleShooting(deltaTime, input) {
+    _handleShooting(deltaTime, input, activeSpell) {
         if (this.currentFireTimer > 0) {
             this.currentFireTimer -= deltaTime;
         }
 
-        const activeSpell = this.inventory.slots[this.inventory.activeIndex]?.data;
-    if (!activeSpell) return;
+        if (!activeSpell) return;
 
-    // CORREÇÃO: Adicione uma verificação se o mouse está sobre um elemento de UI
-    // ou se a classe HotbarUI está em modo de drag.
-    const isOverUI = document.querySelector('.hotbar-container:hover') || 
-                     document.querySelector('.spell-container:hover');
-        // Só atira se clicou, se o cooldown zerou E se tem mana suficiente
-        if (input.isMouseDown && this.currentFireTimer <= 0 && this.stats.mana >= activeSpell.manaCost) {
+        // Verifica se o mouse está em cima da Hotbar para não atirar
+        const isOverUI = document.querySelector('.hotbar-container:hover');
+
+        // CORREÇÃO: Colocamos o !isOverUI dentro do IF principal
+        if (input.isMouseDown && !isOverUI && this.currentFireTimer <= 0 && this.stats.mana >= activeSpell.manaCost) {
             
-            // Consome a Mana
             this.stats.mana -= activeSpell.manaCost;
 
             const wandEndX = this.x + Math.cos(this.aimAngle) * 30;
             const wandEndY = this.y + Math.sin(this.aimAngle) * 30;
 
             if (typeof this.onShoot === 'function') {
-                // Agora passamos o objeto 'activeSpell' inteiro para o motor
                 this.onShoot(wandEndX, wandEndY, this.aimAngle, activeSpell);
             }
             
-            // O tempo de recarga agora vem da magia, não é mais fixo!
             this.currentFireTimer = activeSpell.cooldown; 
         }
     }
