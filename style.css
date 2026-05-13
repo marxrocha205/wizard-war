@@ -1,0 +1,150 @@
+/* Reset básico para remover margens e evitar barras de rolagem indesejadas */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Evita scroll na tela do jogo */
+    background-color: #000;
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+#ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Deixa os cliques passarem para o Canvas */
+    padding: 20px;
+}
+
+.hud-container {
+    width: 250px;
+    transition: opacity 0.5s ease-in-out; /* Transição suave */
+    opacity: 1; /* Visível por padrão quando a classe 'hidden' for removida */
+}
+
+.hud-container.hidden {
+    opacity: 0;
+}
+
+.bar-bg {
+    width: 100%;
+    height: 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 2px solid #2c3e50;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    width: 100%;
+    transition: width 0.1s linear; /* Animação suave ao perder vida/mana */
+}
+
+.health { background-color: #e74c3c; }
+.mana { background-color: #3498db; }
+
+/* --- HUD DE MAGIA (SPELL) --- */
+.spell-container {
+    position: absolute;
+    bottom: 20px;
+    right: 20px; 
+    background-color: rgba(26, 37, 47, 0.9);
+    border: 3px solid #34495e;
+    border-radius: 8px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: white;
+    pointer-events: auto;
+    z-index: 10;
+}
+
+.spell-color-box {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #00ffff;
+    box-shadow: 0 0 10px #00ffff;
+}
+
+.spell-info {
+    display: flex;
+    flex-direction: column;
+}
+
+#spell-name {
+    font-weight: bold;
+    font-size: 16px;
+    color: #ecf0f1;
+}
+
+#spell-cost {
+    font-size: 12px;
+    color: #95a5a6;
+}
+
+.hotbar-container {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%); /* O truque mágico para centralizar */
+    display: flex;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 8px;
+    border: 3px solid #34495e;
+    border-radius: 6px;
+    pointer-events: auto;
+    z-index: 5;
+}
+
+.slot {
+    width: 50px;
+    height: 50px;
+    background: #7f8c8d;
+    border: 3px solid #34495e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: grab;
+    user-select: none;
+}
+
+.slot.active {
+    border-color: #f1c40f; /* Destaque do slot selecionado */
+    background: #95a5a6;
+}
+
+.slot-icon {
+    width: 32px;
+    height: 32px;
+    pointer-events: none; /* Evita bug no drag and drop */
+}
+
+.slot-number {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 10px;
+    color: #bdc3c7;
+    font-weight: bold;
+}
+
+.dragging {
+    opacity: 0.4;
+}

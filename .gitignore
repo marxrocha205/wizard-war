@@ -1,0 +1,14 @@
+# Dependências e caches (caso usemos Node/NPM no futuro para o backend)
+node_modules/
+.env
+
+# Arquivos de sistema operacional (Mac/Windows)
+.DS_Store
+Thumbs.db
+
+# Arquivos da IDE (VSCode, WebStorm, etc)
+.vscode/
+.idea/
+
+# Logs locais
+*.log

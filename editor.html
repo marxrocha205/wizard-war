@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>SkyBattle Arena - Map Editor</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e272e; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        h1 { margin: 0 0 15px 0; font-size: 24px; color: #f1c40f; }
+        
+        /* O canvas agora aceita transformações de largura dinâmicas via JS */
+        canvas { background: #2c3e50; cursor: crosshair; display: block; }
+        
+        .toolbar { display: flex; gap: 20px; justify-content: space-between; align-items: center; width: 100%; max-width: 1400px; background: #2c3e50; padding: 15px; border-radius: 8px; box-sizing: border-box; margin-bottom: 10px;}
+        button { background: #27ae60; border: none; color: white; padding: 10px 20px; cursor: pointer; border-radius: 4px; font-weight: bold; transition: background 0.2s; }
+        button:hover { background: #2ecc71; }
+        
+        .tile-selector { display: flex; gap: 15px; align-items: center; }
+        .tile-btn { display: flex; align-items: center; gap: 8px; padding: 5px 10px; border: 2px solid transparent; cursor: pointer; border-radius: 6px; transition: 0.2s; background: #34495e; }
+        .tile-btn:hover { background: #3b536b; }
+        .tile-btn.active { border-color: #f1c40f; background: #1a252f; }
+        .color-box { width: 20px; height: 20px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.2); }
+        
+        .zoom-controls { display: flex; align-items: center; gap: 10px; background: #34495e; padding: 5px 15px; border-radius: 6px; }
+        .zoom-btn { background: #7f8c8d; padding: 5px 12px; font-size: 16px; }
+        .zoom-btn:hover { background: #95a5a6; }
+    </style>
+</head>
+<body>
+    <h1>Editor de Arena</h1>
+    <div class="toolbar">
+        <div class="tile-selector">
+            <span style="font-weight: bold; color: #bdc3c7;">Ferramenta:</span>
+            <div class="tile-btn active" data-type="1">
+                <div class="color-box" style="background: #7f8c8d;"></div>
+                <span>Parede Sólida</span>
+            </div>
+            <div class="tile-btn" data-type="2">
+                <div class="color-box" style="background: #e67e22;"></div>
+                <span>Plataforma</span>
+            </div>
+            <div class="tile-btn" data-type="0" title="Apagar blocos desenhados">
+                <div class="color-box" style="background: transparent; border: 1px dashed #e74c3c;"></div>
+                <span style="color: #e74c3c;">Borracha</span>
+            </div>
+        </div>
+
+        <!-- NOVO: Controles de Zoom -->
+        <div class="zoom-controls">
+            <span style="font-weight: bold; color: #bdc3c7;">🔎 Zoom:</span>
+            <button id="btn-zoom-out" class="zoom-btn">➖</button>
+            <span id="zoom-level" style="min-width: 45px; text-align: center; font-weight: bold;">100%</span>
+            <button id="btn-zoom-in" class="zoom-btn">➕</button>
+        </div>
+
+        <button id="btn-export">📥 Exportar (.json)</button>
+    </div>
+    
+    <!-- Contêiner com Scroll -->
+    <div style="width: 100%; max-width: 1400px; height: 75vh; overflow: auto; border: 3px solid #34495e; border-radius: 4px; background: #1a252f;">
+        <canvas id="editorCanvas" width="3200" height="1600"></canvas>
+    </div>
+
+    <script type="module" src="src/editor/MapEditor.js"></script>
+</body>
+</html>
