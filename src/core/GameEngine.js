@@ -124,11 +124,14 @@ export class GameEngine {
         // 1. Atualiza a física do jogador e a câmera
         this.player.update(deltaTime, this.input, this.tileMap, this.camera);
         this.camera.follow(this.player);
-        this.hotbarUI.render();
         
         // 2. Atualiza UI com status E a magia equipada
         const activeSpell = this.player.spells[this.player.currentSpellIndex];
         this.uiManager.update(this.player.stats, activeSpell);
+        
+        // CORREÇÃO AQUI: Atualiza o cursor do inventário de forma otimizada
+        this.hotbarUI.update(); 
+        
         this.damageTextManager.update(deltaTime);
 
         // =====================================
