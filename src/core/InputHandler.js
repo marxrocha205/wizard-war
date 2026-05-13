@@ -45,13 +45,20 @@ export class InputHandler {
 
         // Mouse (Clique)
         window.addEventListener('mousedown', (e) => {
+            // CORREÇÃO: Se o clique foi em qualquer elemento da UI, ignoramos completamente!
+            // Assim a arma nunca dispara ao tentar arrastar um item.
+            if (e.target.closest('#ui-layer') || e.target.closest('#hotbar')) {
+                return; 
+            }
+
             if (e.button === 0) this.isMouseDown = true; // Clique esquerdo
         });
 
         window.addEventListener('mouseup', (e) => {
             if (e.button === 0) this.isMouseDown = false;
         });
-        // Reset de segurança caso o Drag and Drop do HTML5 "roube" o clique
+
+        // Reset de segurança
         window.addEventListener('dragend', () => {
             this.isMouseDown = false;
         });

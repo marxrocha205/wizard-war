@@ -29,32 +29,34 @@ export class HotbarUI {
             }
 
             // --- Eventos de Drag and Drop ---
+            // --- Eventos de Drag and Drop (Nativo HTML5) ---
             div.addEventListener('dragstart', (e) => {
-                this.draggedIndex = index;
-                this.isDraggingUI = true;
+                // Guarda o INDEX de origem diretamente no evento de arrasto
+                e.dataTransfer.setData('text/plain', index);
                 div.classList.add('dragging');
-                e.stopPropagation();
             });
 
-            // CORREÇÃO: O HTML5 exige o preventDefault no dragover para o drop funcionar!
             div.addEventListener('dragover', (e) => {
-                e.preventDefault(); 
+                e.preventDefault(); // Permite que a zona aceite o 'drop'
             });
             
             div.addEventListener('drop', (e) => {
                 e.preventDefault();
-                this.onSwap(this.draggedIndex, index);
-                this.draggedIndex = null;
-                this.isDraggingUI = false;
-                this.render();
+                
+                // Recupera o INDEX que foi guardado no início do arrasto
+                const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                const toIndex = index;
+                
+                // Valida se o número é válido e se não estamos a soltar no mesmo sítio
+                if (!isNaN(fromIndex) && fromIndex !== toIndex) {
+                    this.onSwap(fromIndex, toIndex);
+                    this.render(); // Re-desenha a barra com os itens trocados
+                }
             });
 
             div.addEventListener('dragend', () => {
                 div.classList.remove('dragging');
-                this.isDraggingUI = false;
-                
-                // CORREÇÃO: Força o navegador a disparar um "MouseUp" global 
-                // para desbugar o InputHandler que ficou preso atirando
+                // Segurança extra para descolar o clique
                 window.dispatchEvent(new Event('mouseup')); 
             });
 
