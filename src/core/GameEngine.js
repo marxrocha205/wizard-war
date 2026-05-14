@@ -36,14 +36,14 @@ export class GameEngine {
         window.addEventListener('resize', () => this._resizeCanvas());
 
         this.input = new InputHandler(this.canvas);
-        
+
         // Instanciando UIs
         this.uiManager = new UIManager();
         this.damageTextManager = new DamageTextManager();
 
         this.player = new Player(600, 200);
         this.projectiles = [];
-        
+
         this.hotbarUI = new HotbarUI(this.player.inventory, (from, to) => {
             this.player.inventory.swapSlots(from, to);
         });
@@ -106,7 +106,7 @@ export class GameEngine {
         // Se a aba ficou inativa e o deltaTime acumulou muito (mais de 100ms), 
         // limitamos o valor. Assim, quando você voltar para a aba, a física não explode.
         if (deltaTime > 0.1) {
-            deltaTime = 0.1; 
+            deltaTime = 0.1;
         }
 
         this.update(deltaTime);
@@ -124,14 +124,14 @@ export class GameEngine {
         // 1. Atualiza a física do jogador e a câmera
         this.player.update(deltaTime, this.input, this.tileMap, this.camera);
         this.camera.follow(this.player);
-        
+
         // 2. Atualiza UI com status E a magia equipada
         const activeSpell = this.player.spells[this.player.currentSpellIndex];
         this.uiManager.update(this.player.stats, activeSpell);
-        
+
         // CORREÇÃO AQUI: Atualiza o cursor do inventário de forma otimizada
-        this.hotbarUI.update(); 
-        
+        this.hotbarUI.update();
+
         this.damageTextManager.update(deltaTime);
 
         // =====================================
@@ -152,12 +152,12 @@ export class GameEngine {
         // =====================================
         this.collectibles.forEach(item => {
             item.update(deltaTime, this.tileMap);
-            
+
             // Distância Euclidiana simples para pegar o item
             const dx = this.player.x - item.x;
             const dy = this.player.y - item.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
-            
+
             // Se o jogador chegou perto do item
             if (distance < 30 && item.active) {
                 item.collect(this.player);
@@ -175,19 +175,19 @@ export class GameEngine {
                 const pRect = { x: p.x - p.size, y: p.y - p.size, w: p.size * 2, h: p.size * 2 };
                 const mapCollisions = this.tileMap.getCollidingTiles(pRect);
                 if (mapCollisions.some(tile => tile.type === 1)) {
-                    p.active = false; 
+                    p.active = false;
                 }
 
                 // DANO NO INIMIGO E SISTEMA DE MORTE
-                if (p.active && this.npc.active) { 
+                if (p.active && this.npc.active) {
                     const hitPart = this.npc.checkHit(p);
                     if (hitPart) {
-                        p.active = false; 
-                        
+                        p.active = false;
+
                         let multiplier = 1.0;
-                        if (hitPart === 'feet') multiplier = 0.5; 
-                        if (hitPart === 'body') multiplier = 1.0; 
-                        if (hitPart === 'head') multiplier = 2.0; 
+                        if (hitPart === 'feet') multiplier = 0.5;
+                        if (hitPart === 'body') multiplier = 1.0;
+                        if (hitPart === 'head') multiplier = 2.0;
 
                         let finalDamage = Math.floor(p.baseDamage * multiplier);
                         this.npc.health -= finalDamage;
@@ -198,9 +198,14 @@ export class GameEngine {
                             // Gera os espólios e joga no mapa
                             const droppedLoot = this.npc.die();
                             this.collectibles.push(...droppedLoot);
-                            
+
                             // Inicia o timer de 3 segundos para ele voltar a viver
-                            this.respawnTimer = 3.0; 
+                            this.respawnTimer = 3.0;
+                            this.player.stats.kills++; // Incrementa a morte
+                            Logger.info(`Inimigo abatido! Total: ${this.player.stats.kills}`);
+
+                            const droppedLoot = this.npc.die();
+                            this.collectibles.push(...droppedLoot);
                         }
                     }
                 }
@@ -227,12 +232,12 @@ export class GameEngine {
         // ==========================================
         // TUDO AQUI DENTRO ESTÁ NO "WORLD SPACE" (MUNDO)
         // ==========================================
-        
+
         this.tileMap.draw(this.ctx);
-        
+
         // Desenha os coletáveis antes do player
-        this.collectibles.forEach(c => c.draw(this.ctx)); 
-        
+        this.collectibles.forEach(c => c.draw(this.ctx));
+
         this.npc.draw(this.ctx);
         this.projectiles.forEach(p => p.draw(this.ctx));
         this.player.draw(this.ctx);

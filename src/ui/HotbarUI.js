@@ -17,9 +17,9 @@ export class HotbarUI {
     // NOVO MÉTODO: O Game Loop chama este método a 60FPS, mas ele só 
     // mexe na tela se você realmente trocou de slot (Performance absurda!)
     update() {
-        if (this.lastActiveIndex !== this.inventory.activeIndex) {
-            this.lastActiveIndex = this.inventory.activeIndex;
-            this.render();
+        if (this.inventory.isDirty) {
+        this.render();
+        this.inventory.isDirty = false;
         }
     }
 

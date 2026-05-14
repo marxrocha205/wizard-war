@@ -66,18 +66,19 @@ export class Collectible {
      * @param {import('../player/Player').Player} player 
      */
     collect(player) {
-        this.active = false;
-        
         if (this.type === 'coin') {
-            // O jogador ainda não tem 'coins' no stats, mas podemos criar a lógica de pontuação
-            player.stats.coins = (player.stats.coins || 0) + this.value;
-        } else if (this.type === 'health') {
-            player.stats.health = Math.min(player.stats.health + this.value, player.stats.maxHealth);
-        } else if (this.type === 'mana') {
-            player.stats.mana = Math.min(player.stats.mana + this.value, player.stats.maxMana);
+        player.stats.coins = (player.stats.coins || 0) + this.value;
+        this.active = false;
+        Logger.info(`Moedas coletadas: +${this.value}`);
+    } else {
+        // Tenta adicionar ao inventário
+        const added = player.inventory.addItem(this.type, 1);
+        if (added) {
+            this.active = false;
+            Logger.info(`${this.type} adicionado ao inventário.`);
         }
-        Logger.info(`Jogador coletou: ${this.type} (+${this.value})`);
     }
+}
 
     draw(ctx) {
         ctx.fillStyle = this.color;

@@ -27,7 +27,9 @@ export class Player {
             name: "Mago Voador",
             health: 100,
             mana: 100,
-            maxMana: 100
+            maxMana: 100,
+            coins: 0, 
+            kills: 0
         };
 
         // Configurações de Mana e Voo
